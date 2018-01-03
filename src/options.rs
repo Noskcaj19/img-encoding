@@ -1,14 +1,13 @@
 use errors;
-use failure::Error;
 
 use clap::{self, App, AppSettings, Arg, SubCommand};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum ImageColor {
-    Luma,
-    LumaA,
+    Gray,
+    GrayA,
     Rgb,
-    Rgba,
+    RgbA,
 }
 
 #[derive(Debug, Clone)]
@@ -25,14 +24,14 @@ pub enum Mode {
 
 #[derive(Debug, Clone)]
 pub struct Options {
-    input_file: InputFile,
-    output_file: Option<String>,
-    color_type: ImageColor,
-    mode: Mode,
+    pub input_file: InputFile,
+    pub output_file: Option<String>,
+    pub color_type: Option<ImageColor>,
+    pub mode: Mode,
 }
 
 pub fn get_options() -> Result<Options, errors::OptionsError> {
-    let color_types = ["luma", "lumaa", "rgb", "rgba"];
+    let color_types = ["gray", "graya", "rgb", "rgba"];
 
     let matches = App::new("Image Encoder")
         .version("1.0")
@@ -66,16 +65,9 @@ pub fn get_options() -> Result<Options, errors::OptionsError> {
             SubCommand::with_name("decode")
                 .about("Decodes an image to the data it contains")
                 .arg(
-                    Arg::with_name("color-type")
-                        .help("The color type of the input image")
-                        .index(1)
-                        .required(true)
-                        .possible_values(&color_types),
-                )
-                .arg(
-                    Arg::with_name("file")
+                    Arg::with_name("in-file")
                         .help("The input image file")
-                        .index(2)
+                        .index(1)
                         .required(true),
                 ),
         )
@@ -91,10 +83,10 @@ fn parse_matches<'a>(args: &clap::ArgMatches<'a>) -> Result<Options, errors::Opt
                 name => InputFile::File(name.to_owned()),
             };
             let color_type = match sub_m.value_of("color-type").ok_or(errors::OptionsError)? {
-                "luma" => ImageColor::Luma,
-                "lumaa" => ImageColor::LumaA,
+                "gray" => ImageColor::Gray,
+                "graya" => ImageColor::GrayA,
                 "rgb" => ImageColor::Rgb,
-                "rgba" => ImageColor::Rgba,
+                "rgba" => ImageColor::RgbA,
                 _ => panic!("Unknown color type"),
             };
             Options {
@@ -105,7 +97,7 @@ fn parse_matches<'a>(args: &clap::ArgMatches<'a>) -> Result<Options, errors::Opt
                         .ok_or(errors::OptionsError)?
                         .to_owned(),
                 ),
-                color_type,
+                color_type: Some(color_type),
                 mode: Mode::Encode,
             }
         }
@@ -114,17 +106,10 @@ fn parse_matches<'a>(args: &clap::ArgMatches<'a>) -> Result<Options, errors::Opt
                 "-" => InputFile::Stdin,
                 name => InputFile::File(name.to_owned()),
             };
-            let color_type = match sub_m.value_of("color-type").ok_or(errors::OptionsError)? {
-                "luma" => ImageColor::Luma,
-                "lumaa" => ImageColor::LumaA,
-                "rgb" => ImageColor::Rgb,
-                "rgba" => ImageColor::Rgba,
-                _ => panic!("Unknown color type"),
-            };
             Options {
                 input_file,
                 output_file: None,
-                color_type,
+                color_type: None,
                 mode: Mode::Decode,
             }
         }
