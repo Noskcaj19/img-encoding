@@ -1,10 +1,9 @@
 [package]
 authors = ["Noskcaj <kcajdev@gmail.com>"]
 name = "img-encode"
-version = "0.1.0"
+version = "0.1.1"
 
 [dependencies]
-clap = "2.26.2"
+clap = "2.29.0"
 failure = "0.1.1"
-failure_derive = "0.1.1"
-image = "0.16.0"
+image = "0.18.0"
