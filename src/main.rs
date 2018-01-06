@@ -74,25 +74,25 @@ fn encode(options: options::Options) -> Result<(), Error> {
     use options::ImageColor;
     match color_type {
         ImageColor::Gray => {
-            let imgbuf: image::ImageBuffer<image::Luma<_>, Vec<_>> =
+            let imgbuf: image::ImageBuffer<image::Luma<_>, _> =
                 image::ImageBuffer::from_raw(width, height, data.to_owned())
                     .ok_or(errors::EncodingError)?;
             image::ImageLuma8(imgbuf).save(fout, image::PNG)?;
         }
         ImageColor::GrayA => {
-            let imgbuf: image::ImageBuffer<image::LumaA<_>, Vec<_>> =
+            let imgbuf: image::ImageBuffer<image::LumaA<_>, _> =
                 image::ImageBuffer::from_raw(width, height, data.to_owned())
                     .ok_or(errors::EncodingError)?;
             image::ImageLumaA8(imgbuf).save(fout, image::PNG)?;
         }
         ImageColor::Rgb => {
-            let imgbuf: image::ImageBuffer<image::Rgb<_>, Vec<_>> =
+            let imgbuf: image::ImageBuffer<image::Rgb<_>, _> =
                 image::ImageBuffer::from_raw(width, height, data.to_owned())
                     .ok_or(errors::EncodingError)?;
             image::ImageRgb8(imgbuf).save(fout, image::PNG)?;
         }
         ImageColor::RgbA => {
-            let imgbuf: image::ImageBuffer<image::Rgba<_>, Vec<_>> =
+            let imgbuf: image::ImageBuffer<image::Rgba<_>, _> =
                 image::ImageBuffer::from_raw(width, height, data.to_owned())
                     .ok_or(errors::EncodingError)?;
             image::ImageRgba8(imgbuf).save(fout, image::PNG)?;
